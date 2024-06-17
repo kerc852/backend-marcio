@@ -1,35 +1,27 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const server = express();
-
 const produtoRoutes = require('./routes/produtoRoutes');
 
-//Middleware
-server.use(
-    express.urlencoded({
-        extended: true,
-    }),
-);
-
+// Middleware para processar corpos de requisição
+server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 
-//Criando o endpoint e rotas da minha API
-server.use('https://backend-marcio-3.onrender.com', produtoRoutes);
+// Configuração das rotas para o serviço Web no Render
+server.use('/api', produtoRoutes); // Use o prefixo /api ou o que for apropriado
 
-//Conexão com MongoDB Atlas
-const DB_USER = 'mernproject';
-const DB_PASSWORD = 'morango123'
+// URI de conexão do MongoDB Atlas (usando variável de ambiente)
+const MONGODB_URI = process.env.MONGODB_URI;
 
-//Conexão com MongoDB Atlas
-mongoose.connect(
-    `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.idilir7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
-)
-.then(()=>{
+// Conexão com o MongoDB Atlas
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
     console.log('Conectado ao MongoDB!');
-})
-.catch((err)=>{
-    console.log(err);
-})
-
-//Porta do servidor
-server.listen(3000);
+    // Iniciar o servidor apenas depois de conectar ao MongoDB
+    server.listen(process.env.PORT || 3000, () => {
+      console.log(`Servidor rodando na porta ${process.env.PORT || 3000}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Erro ao conectar ao MongoDB:', err);
+  });
