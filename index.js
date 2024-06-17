@@ -14,7 +14,7 @@ server.use(
 server.use(express.json());
 
 //Criando o endpoint e rotas da minha API
-server.use('/produto', produtoRoutes);
+server.use('https://backend-marcio-3.onrender.com', produtoRoutes);
 
 //Conexão com MongoDB Atlas
 const DB_USER = 'mernproject';
